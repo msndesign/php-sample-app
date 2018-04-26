@@ -1,18 +1,22 @@
-# Sistemas para Internet - SecDevOps
+# NAC DEVOPS
 
-***nac:*** Criação de uma aplicação no formato "CRUD" executada em containers com base na linguagem "PHP" e no banco de dados "MySQL";
+# Rodando a aplicação
 
----
+Para rodar a aplicação é necessário primeiro efetuar um pull das imagens necessárias:
 
-***Importante:***
+- docker pull php:7.2-apache  
+- docker pull mysql:5.7
 
-Instruções sobre modelo de execução e entregáveis podem ser obtidas no [diretório de documentação](https://github.com/fiapsecdevops/php-sample-app/tree/master/docs) ou no portal do aluno;
+Após rodar é necessário fazer o build das imagens.
 
-Duvidas podem ser enviadas para <profhelder.pereira@fiap.com.br>
+- docker build . -t backend-mysql:v1  
+- docker build . -t frontend-php:v1
 
-Esta app foi adaptada do exemplo contido [neste artigo](https://www.tutorialrepublic.com/php-tutorial/php-mysql-crud-application.php)
 
-A estrutura foi criada com base nas seguintes tags:
+Após o build precisamos nos conectar no banco mysql:
 
-- frontend-0.1: Versão de testes SEM conexão com o banco para a primeira parte da NAC;
-- stable:  Versão COM as linhas de conexão com o banco configuradas, será necessário que o MySQL esteja operante para testes faltando apenas a criação do Dockerfile da aplicação/mysql;
+- docker run -d --rm --name backend -e MYSQL_DATABASE=demo -e MYSQL_ALLOW_EMPTY_PASSWORD=yes backend-mysql
+
+Com o banco conectado, precisamos conectar o frontend com o backend. Para isso utilizamos o comando --link:
+
+- docker run -d --rm --name frontend -p 80:80 --link backend frontend-php
